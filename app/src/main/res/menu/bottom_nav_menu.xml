@@ -8,4 +8,8 @@
         android:id="@+id/nav_chat"
         android:title="Chat"
         android:icon="@android:drawable/ic_menu_send"/>
+    <item
+        android:id="@+id/nav_artifacts"
+        android:title="Artifacts"
+        android:icon="@android:drawable/ic_menu_save"/>
 </menu>

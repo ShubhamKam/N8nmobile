@@ -40,12 +40,17 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.nav_n8n -> pager.currentItem = 0
                 R.id.nav_chat -> pager.currentItem = 1
+                R.id.nav_artifacts -> pager.currentItem = 2
             }
             true
         }
         pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                bottomNav.selectedItemId = if (position == 0) R.id.nav_n8n else R.id.nav_chat
+                bottomNav.selectedItemId = when (position) {
+                    0 -> R.id.nav_n8n
+                    1 -> R.id.nav_chat
+                    else -> R.id.nav_artifacts
+                }
             }
         })
     }

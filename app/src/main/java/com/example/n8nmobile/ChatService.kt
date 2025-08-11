@@ -10,6 +10,10 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import org.json.JSONArray
 import java.util.concurrent.TimeUnit
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class ChatService(private val context: Context) {
     private val client: OkHttpClient = OkHttpClient.Builder()
@@ -48,7 +52,9 @@ class ChatService(private val context: Context) {
             val json = JSONObject(resp.body?.string().orEmpty())
             val choices = json.optJSONArray("choices")
             val content = choices?.optJSONObject(0)?.optJSONObject("message")?.optString("content")
-            return content ?: json.toString(2)
+            val text = content ?: json.toString(2)
+            persistArtifact("openai", text)
+            return text
         }
     }
 
@@ -81,7 +87,9 @@ class ChatService(private val context: Context) {
             val json = JSONObject(resp.body?.string().orEmpty())
             val arr = json.optJSONArray("content")
             val first = arr?.optJSONObject(0)?.optString("text")
-            return first ?: json.toString(2)
+            val text = first ?: json.toString(2)
+            persistArtifact("claude", text)
+            return text
         }
     }
 
@@ -107,7 +115,20 @@ class ChatService(private val context: Context) {
             val content = candidates?.optJSONObject(0)?.optJSONObject("content")
             val parts = content?.optJSONArray("parts")
             val text = parts?.optJSONObject(0)?.optString("text")
-            return text ?: json.toString(2)
+            val out = text ?: json.toString(2)
+            persistArtifact("gemini", out)
+            return out
+        }
+    }
+
+    private fun persistArtifact(provider: String, text: String) {
+        try {
+            val dir = File(context.filesDir, "artifacts")
+            if (!dir.exists()) dir.mkdirs()
+            val ts = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+            val file = File(dir, "${provider}_$ts.txt")
+            file.writeText(text)
+        } catch (_: Throwable) {
         }
     }
 

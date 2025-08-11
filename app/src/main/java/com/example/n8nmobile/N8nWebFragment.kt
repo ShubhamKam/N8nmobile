@@ -24,9 +24,19 @@ class N8nWebFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         try {
+            binding.webview.setOnTouchListener { v, event ->
+                // Improve gesture handling for pinch-zoom and panning
+                v.parent?.requestDisallowInterceptTouchEvent(true)
+                false
+            }
+            binding.webview.settings.apply {
+                builtInZoomControls = true
+                displayZoomControls = false
+                useWideViewPort = true
+                loadWithOverviewMode = true
+            }
             (activity as? MainActivity)?.setupWebView(binding.webview, binding.progress)
         } catch (t: Throwable) {
-            // No-op: avoid crash if WebView init fails; shown in UI by progress not hiding
         }
     }
 

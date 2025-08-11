@@ -5,7 +5,10 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
 class MainPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
-    override fun getItemCount(): Int = 2
-    override fun createFragment(position: Int): Fragment =
-        if (position == 0) N8nWebFragment() else ChatFragment()
+    override fun getItemCount(): Int = 3
+    override fun createFragment(position: Int): Fragment = when (position) {
+        0 -> N8nWebFragment()
+        1 -> ChatFragment()
+        else -> ArtifactsFragment()
+    }
 }
