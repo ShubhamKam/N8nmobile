@@ -61,13 +61,28 @@ jobs:
         run: |
           set -e
           source "$SDKMAN_DIR/bin/sdkman-init.sh"
+          gradle --version
           for i in 1 2 3; do
             if gradle :app:assembleDebug --no-daemon --stacktrace -Dorg.gradle.jvmargs="-Xmx2g" -Dorg.gradle.workers.max=2; then break; fi;
             echo "Retrying Gradle build ($i)"; sleep 5;
           done
 
+      - name: List build outputs
+        if: always()
+        run: |
+          echo "Listing outputs directory" 
+          ls -la app/build/outputs || true
+          echo "Listing APK debug directory"
+          ls -la app/build/outputs/apk/debug || true
+          echo "Find any APK/AAB"
+          shopt -s globstar || true
+          ls -la **/*.apk **/*.aab || true
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: n8n-mobile-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          path: |
+            app/build/outputs/apk/debug/*.apk
+            app/build/outputs/**/*.apk
+            app/build/outputs/**/*.aab
