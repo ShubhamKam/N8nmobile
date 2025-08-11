@@ -23,7 +23,11 @@ class N8nWebFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? MainActivity)?.setupWebView(binding.webview, binding.progress)
+        try {
+            (activity as? MainActivity)?.setupWebView(binding.webview, binding.progress)
+        } catch (t: Throwable) {
+            // No-op: avoid crash if WebView init fails; shown in UI by progress not hiding
+        }
     }
 
     fun getWebView(): WebView? = _binding?.webview

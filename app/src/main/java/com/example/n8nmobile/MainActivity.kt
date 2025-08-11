@@ -15,7 +15,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.example.n8nmobile.databinding.ActivityMainBinding
-import com.google.android.material.navigation.NavigationBarView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupTabs() {
         val pager: ViewPager2 = binding.pager
         pager.adapter = MainPagerAdapter(this)
-        val bottomNav: NavigationBarView = binding.bottomNav
+        val bottomNav: BottomNavigationView = binding.bottomNav
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_n8n -> pager.currentItem = 0
