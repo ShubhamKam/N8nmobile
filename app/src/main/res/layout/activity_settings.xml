@@ -19,7 +19,8 @@
             android:id="@+id/openai_key_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="OpenAI/Grok API Key" />
+            android:hint="OpenAI/Grok API Key"
+            android:inputType="textPassword" />
 
         <EditText
             android:id="@+id/openai_base_url_input"
@@ -31,13 +32,15 @@
             android:id="@+id/anthropic_key_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Anthropic API Key" />
+            android:hint="Anthropic API Key"
+            android:inputType="textPassword" />
 
         <EditText
             android:id="@+id/gemini_key_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Gemini API Key" />
+            android:hint="Gemini API Key"
+            android:inputType="textPassword" />
 
         <Button
             android:id="@+id/save_button"

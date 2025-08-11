@@ -12,6 +12,7 @@ class SettingsActivity : AppCompatActivity() {
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "Settings"
 
         val prefs = Preferences(this)
         binding.n8nUrlInput.setText(prefs.getN8nUrl())
