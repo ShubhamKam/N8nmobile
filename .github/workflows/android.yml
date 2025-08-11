@@ -31,11 +31,32 @@ jobs:
             "platforms;android-34" \
             "build-tools;34.0.0"
 
-      - name: Build Debug APK (Gradle 8.7)
-        uses: gradle/gradle-build-action@v2
-        with:
-          gradle-version: 8.7
-          arguments: :app:assembleDebug
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses
+
+      - name: Install Gradle 8.7 via SDKMAN (with retry)
+        env:
+          SDKMAN_DIR: ${{ runner.temp }}/.sdkman
+        run: |
+          set -e
+          curl -s "https://get.sdkman.io" | bash
+          source "$SDKMAN_DIR/bin/sdkman-init.sh"
+          for i in 1 2 3; do
+            if sdk install gradle 8.7; then break; fi;
+            echo "Retrying Gradle install ($i)"; sleep 5;
+          done
+          gradle -v
+
+      - name: Build Debug APK (no wrapper)
+        env:
+          SDKMAN_DIR: ${{ runner.temp }}/.sdkman
+        run: |
+          set -e
+          source "$SDKMAN_DIR/bin/sdkman-init.sh"
+          for i in 1 2 3; do
+            if gradle :app:assembleDebug; then break; fi;
+            echo "Retrying Gradle build ($i)"; sleep 5;
+          done
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
