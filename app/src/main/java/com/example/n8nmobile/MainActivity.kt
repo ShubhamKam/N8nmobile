@@ -15,8 +15,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.example.n8nmobile.databinding.ActivityMainBinding
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.navigation.NavigationBarView
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,12 +33,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupTabs() {
-        val tabLayout: TabLayout = binding.tabs
         val pager: ViewPager2 = binding.pager
         pager.adapter = MainPagerAdapter(this)
-        TabLayoutMediator(tabLayout, pager) { tab, position ->
-            tab.text = if (position == 0) "n8n" else "Chat"
-        }.attach()
+        val bottomNav: NavigationBarView = binding.bottomNav
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_n8n -> pager.currentItem = 0
+                R.id.nav_chat -> pager.currentItem = 1
+            }
+            true
+        }
+        pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                bottomNav.selectedItemId = if (position == 0) R.id.nav_n8n else R.id.nav_chat
+            }
+        })
     }
 
     fun setupWebView(webView: WebView, progressView: View) {
