@@ -57,9 +57,14 @@ class ChatService(private val context: Context) {
         val body = JSONObject().apply {
             put("model", "claude-3-5-sonnet-20240620")
             put("max_tokens", 512)
-            put("messages", listOf(
-                JSONObject().put("role", "user").put("content", message)
-            ))
+            // Anthropic messages API expects content as a list of content blocks
+            val userMessage = JSONObject().apply {
+                put("role", "user")
+                put("content", listOf(
+                    JSONObject().put("type", "text").put("text", message)
+                ))
+            }
+            put("messages", listOf(userMessage))
         }.toString()
         val req = Request.Builder()
             .url(url)
