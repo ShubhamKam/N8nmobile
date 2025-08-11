@@ -8,6 +8,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import org.json.JSONArray
 import java.util.concurrent.TimeUnit
 
 class ChatService(private val context: Context) {
@@ -57,14 +58,16 @@ class ChatService(private val context: Context) {
         val body = JSONObject().apply {
             put("model", "claude-3-5-sonnet-20240620")
             put("max_tokens", 512)
-            // Anthropic messages API expects content as a list of content blocks
+            put("system", "You are a helpful assistant.")
+            val contentBlocks = JSONArray().apply {
+                put(JSONObject().put("type", "text").put("text", message))
+            }
             val userMessage = JSONObject().apply {
                 put("role", "user")
-                put("content", listOf(
-                    JSONObject().put("type", "text").put("text", message)
-                ))
+                put("content", contentBlocks)
             }
-            put("messages", listOf(userMessage))
+            val messages = JSONArray().apply { put(userMessage) }
+            put("messages", messages)
         }.toString()
         val req = Request.Builder()
             .url(url)
