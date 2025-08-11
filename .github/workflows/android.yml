@@ -24,12 +24,16 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Android build tools and platforms
+      - name: Install Android cmdline-tools, build-tools, and platforms (with retry)
         run: |
-          sdkmanager --install \
-            "platform-tools" \
-            "platforms;android-34" \
-            "build-tools;34.0.0"
+          set -e
+          for i in 1 2 3; do \
+            sdkmanager --install \
+              "cmdline-tools;latest" \
+              "platform-tools" \
+              "platforms;android-34" \
+              "build-tools;34.0.0" && break || { echo "Retry sdkmanager install ($i)"; sleep 5; }; \
+          done
 
       - name: Accept Android SDK licenses
         run: yes | sdkmanager --licenses
@@ -47,6 +51,10 @@ jobs:
           done
           gradle -v
 
+      - name: Prepare local.properties for Android SDK
+        run: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+
       - name: Build Debug APK (no wrapper)
         env:
           SDKMAN_DIR: ${{ runner.temp }}/.sdkman
@@ -54,7 +62,7 @@ jobs:
           set -e
           source "$SDKMAN_DIR/bin/sdkman-init.sh"
           for i in 1 2 3; do
-            if gradle :app:assembleDebug; then break; fi;
+            if gradle :app:assembleDebug --no-daemon --stacktrace -Dorg.gradle.jvmargs="-Xmx2g" -Dorg.gradle.workers.max=2; then break; fi;
             echo "Retrying Gradle build ($i)"; sleep 5;
           done
 
