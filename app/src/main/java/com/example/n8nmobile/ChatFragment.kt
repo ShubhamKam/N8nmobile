@@ -38,7 +38,7 @@ class ChatFragment : Fragment() {
                 try {
                     val reply = chatService.sendMessage(provider, message)
                     withContext(Dispatchers.Main) {
-                        binding.chatLog.append("Assistant: ${'$'}reply\n")
+                        binding.chatLog.append("Assistant: $reply\n")
                     }
                 } catch (t: Throwable) {
                     withContext(Dispatchers.Main) {
