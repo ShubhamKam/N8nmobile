@@ -22,13 +22,13 @@ class ChatService(private val context: Context) {
             "openai", "grok" -> callOpenAICompat(prefs.openAiApiKey, prefs.getOpenAiBaseUrl(), message)
             "claude" -> callClaude(prefs.anthropicApiKey, message)
             "gemini" -> callGemini(prefs.geminiApiKey, message)
-            else -> "Unknown provider: ${'$'}provider\n"
+            else -> "Unknown provider: $provider\n"
         }
     }
 
     private fun callOpenAICompat(apiKey: String?, baseUrl: String, message: String): String {
         if (apiKey.isNullOrBlank()) return "OpenAI-compatible API key missing. Configure in Settings.\n"
-        val url = "${'$'}baseUrl/v1/chat/completions"
+        val url = "$baseUrl/v1/chat/completions"
         val body = JSONObject().apply {
             put("model", "gpt-3.5-turbo")
             put("messages", listOf(
@@ -38,12 +38,12 @@ class ChatService(private val context: Context) {
         }.toString()
         val req = Request.Builder()
             .url(url)
-            .addHeader("Authorization", "Bearer ${'$'}apiKey")
+            .addHeader("Authorization", "Bearer $apiKey")
             .addHeader("Content-Type", "application/json")
             .post(body.toRequestBody("application/json".toMediaType()))
             .build()
         client.newCall(req).execute().use { resp ->
-            if (!resp.isSuccessful) return "HTTP ${'$'}{resp.code}: ${'$'}{resp.body?.string()}\n"
+            if (!resp.isSuccessful) return "HTTP ${resp.code}: ${resp.body?.string()}\n"
             val json = JSONObject(resp.body?.string().orEmpty())
             val choices = json.optJSONArray("choices")
             val content = choices?.optJSONObject(0)?.optJSONObject("message")?.optString("content")
@@ -69,7 +69,7 @@ class ChatService(private val context: Context) {
             .post(body.toRequestBody("application/json".toMediaType()))
             .build()
         client.newCall(req).execute().use { resp ->
-            if (!resp.isSuccessful) return "HTTP ${'$'}{resp.code}: ${'$'}{resp.body?.string()}\n"
+            if (!resp.isSuccessful) return "HTTP ${resp.code}: ${resp.body?.string()}\n"
             val json = JSONObject(resp.body?.string().orEmpty())
             val arr = json.optJSONArray("content")
             val first = arr?.optJSONObject(0)?.optString("text")
@@ -79,7 +79,7 @@ class ChatService(private val context: Context) {
 
     private fun callGemini(apiKey: String?, message: String): String {
         if (apiKey.isNullOrBlank()) return "Gemini API key missing. Configure in Settings.\n"
-        val url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${'$'}apiKey"
+        val url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=$apiKey"
         val body = JSONObject().apply {
             put("contents", listOf(
                 JSONObject().put("parts", listOf(
@@ -93,7 +93,7 @@ class ChatService(private val context: Context) {
             .post(body.toRequestBody("application/json".toMediaType()))
             .build()
         client.newCall(req).execute().use { resp ->
-            if (!resp.isSuccessful) return "HTTP ${'$'}{resp.code}: ${'$'}{resp.body?.string()}\n"
+            if (!resp.isSuccessful) return "HTTP ${resp.code}: ${resp.body?.string()}\n"
             val json = JSONObject(resp.body?.string().orEmpty())
             val candidates = json.optJSONArray("candidates")
             val content = candidates?.optJSONObject(0)?.optJSONObject("content")
