@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">n8n Mobile</string>
+    <string-array name="providers">
+        <item>OpenAI</item>
+        <item>Grok</item>
+        <item>Claude</item>
+        <item>Gemini</item>
+    </string-array>
 </resources>

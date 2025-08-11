@@ -3,6 +3,8 @@ package com.example.n8nmobile
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.webkit.CookieManager
 import android.webkit.WebChromeClient
@@ -11,7 +13,10 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager2.widget.ViewPager2
 import com.example.n8nmobile.databinding.ActivityMainBinding
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,7 +29,19 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val webView: WebView = binding.webview
+        setupTabs()
+    }
+
+    private fun setupTabs() {
+        val tabLayout: TabLayout = binding.tabs
+        val pager: ViewPager2 = binding.pager
+        pager.adapter = MainPagerAdapter(this)
+        TabLayoutMediator(tabLayout, pager) { tab, position ->
+            tab.text = if (position == 0) "n8n" else "Chat"
+        }.attach()
+    }
+
+    fun setupWebView(webView: WebView, progressView: View) {
 
         CookieManager.getInstance().setAcceptCookie(true)
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
@@ -41,22 +58,41 @@ class MainActivity : AppCompatActivity() {
 
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
-                binding.progress.visibility = View.GONE
+                progressView.visibility = View.GONE
                 super.onPageFinished(view, url)
             }
         }
         webView.webChromeClient = WebChromeClient()
 
-        binding.progress.visibility = View.VISIBLE
-        webView.loadUrl("http://127.0.0.1:5678/")
+        progressView.visibility = View.VISIBLE
+        val url = Preferences(this).getN8nUrl()
+        webView.loadUrl(url)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        val webView: WebView = binding.webview
-        if (keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()) {
-            webView.goBack()
-            return true
+        val fragment = (supportFragmentManager.findFragmentByTag("f0"))
+        if (fragment is N8nWebFragment) {
+            val webView = fragment.getWebView()
+            if (keyCode == KeyEvent.KEYCODE_BACK && webView != null && webView.canGoBack()) {
+                webView.goBack()
+                return true
+            }
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_settings -> {
+                startActivity(SettingsActivity.intent(this))
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }
