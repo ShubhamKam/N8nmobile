@@ -51,18 +51,22 @@ jobs:
           done
           gradle -v
 
+      - name: Generate Gradle wrapper (8.7)
+        env:
+          SDKMAN_DIR: ${{ runner.temp }}/.sdkman
+        run: |
+          source "$SDKMAN_DIR/bin/sdkman-init.sh"
+          gradle wrapper --gradle-version 8.7
+          chmod +x gradlew
+
       - name: Prepare local.properties for Android SDK
         run: |
           echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
 
-      - name: Build Debug APK (no wrapper)
-        env:
-          SDKMAN_DIR: ${{ runner.temp }}/.sdkman
+      - name: Build Debug APK (Gradle wrapper)
         run: |
-          set -e
-          source "$SDKMAN_DIR/bin/sdkman-init.sh"
-          gradle --version
-          gradle :app:assembleDebug --no-daemon --stacktrace -Dorg.gradle.jvmargs="-Xmx2g" -Dorg.gradle.workers.max=2 -Pandroid.enableAdditionalTestBuildType=false
+          ./gradlew --version
+          ./gradlew :app:assembleDebug --no-daemon --stacktrace --info -Dorg.gradle.jvmargs="-Xmx2g" -Dorg.gradle.workers.max=2 -Pandroid.enableAdditionalTestBuildType=false
 
       - name: List build outputs
         if: always()
