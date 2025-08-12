@@ -1,7 +1,22 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.N8nMobile" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Dynamic color on Android 12+ will override these -->
+        <item name="colorPrimary">@color/teal_700</item>
+        <item name="colorSecondary">@color/teal_200</item>
         <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
-        <item name="colorPrimary">@color/black</item>
         <item name="android:windowLightStatusBar">true</item>
+
+        <!-- App-wide typography -->
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
+
+        <!-- Shape system -->
+        <item name="shapeAppearanceSmallComponent">@style/Shape.Small</item>
+        <item name="shapeAppearanceMediumComponent">@style/Shape.Medium</item>
+        <item name="shapeAppearanceLargeComponent">@style/Shape.Large</item>
     </style>
+
+    <style name="Shape.Small" parent="ShapeAppearance.Material3.Corner.Small" />
+    <style name="Shape.Medium" parent="ShapeAppearance.Material3.Corner.Medium" />
+    <style name="Shape.Large" parent="ShapeAppearance.Material3.Corner.Large" />
 </resources>
