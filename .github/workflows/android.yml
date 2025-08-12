@@ -62,10 +62,7 @@ jobs:
           set -e
           source "$SDKMAN_DIR/bin/sdkman-init.sh"
           gradle --version
-          for i in 1 2 3; do
-            if gradle :app:assembleDebug --no-daemon --stacktrace -Dorg.gradle.jvmargs="-Xmx2g" -Dorg.gradle.workers.max=2; then break; fi;
-            echo "Retrying Gradle build ($i)"; sleep 5;
-          done
+          gradle :app:assembleDebug --no-daemon --stacktrace -Dorg.gradle.jvmargs="-Xmx2g" -Dorg.gradle.workers.max=2 -Pandroid.enableAdditionalTestBuildType=false
 
       - name: List build outputs
         if: always()
