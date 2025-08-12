@@ -6,9 +6,7 @@
         <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
 
-        <!-- App-wide typography -->
-        <item name="fontFamily">@font/inter</item>
-        <item name="android:fontFamily">@font/inter</item>
+        <!-- Use Material 3 default typography for broad device support -->
 
         <!-- Shape system -->
         <item name="shapeAppearanceSmallComponent">@style/Shape.Small</item>
